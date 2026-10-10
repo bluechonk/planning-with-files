@@ -54,11 +54,14 @@ class ClaudePluginDescriptorTests(unittest.TestCase):
         for groups in hooks.values():
             for group in groups:
                 for hook in group["hooks"]:
-                    self.assertEqual("sh", hook["command"])
-                    self.assertEqual(
-                        "${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh",
-                        hook["args"][0],
+                    # ZCode 运行时对 type:"command" 只执行 command 字符串并丢弃
+                    # args 数组, 故统一写成单字符串形式; 脚本路径加引号以兼容
+                    # 含空格的安装缓存目录 (见 ClaudePluginLauncherTests)。
+                    self.assertTrue(
+                        hook["command"].startswith('sh "${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh" '),
+                        hook["command"],
                     )
+                    self.assertNotIn("args", hook)
 
         serialized = json.dumps(payload)
         self.assertNotIn("CLAUDE_SKILL_DIR", serialized)

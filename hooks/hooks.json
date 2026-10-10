@@ -7,13 +7,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh",
-            "args": [
-              "${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh",
-              "session-start"
-            ],
             "timeout": 10,
-            "statusMessage": "Restoring planning context"
+            "statusMessage": "Restoring planning context",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh\" session-start"
           }
         ]
       }
@@ -23,12 +19,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh",
-            "args": [
-              "${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh",
-              "user-prompt-submit"
-            ],
-            "timeout": 10
+            "timeout": 10,
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh\" user-prompt-submit"
           }
         ]
       }
@@ -39,12 +31,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh",
-            "args": [
-              "${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh",
-              "pre-tool-use"
-            ],
-            "timeout": 10
+            "timeout": 10,
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh\" pre-tool-use"
           }
         ]
       }
@@ -55,12 +43,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh",
-            "args": [
-              "${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh",
-              "post-tool-use"
-            ],
-            "timeout": 10
+            "timeout": 10,
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh\" post-tool-use"
           }
         ]
       }
@@ -71,12 +55,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh",
-            "args": [
-              "${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh",
-              "pre-compact"
-            ],
-            "timeout": 10
+            "timeout": 10,
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh\" pre-compact"
           }
         ]
       }
@@ -86,13 +66,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh",
-            "args": [
-              "${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh",
-              "stop"
-            ],
             "timeout": 10,
-            "statusMessage": "Checking planning completion"
+            "statusMessage": "Checking planning completion",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh\" stop"
           }
         ]
       }

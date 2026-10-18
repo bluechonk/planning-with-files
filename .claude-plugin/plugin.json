@@ -8,6 +8,7 @@
   },
   "repository": "https://github.com/OthmanAdi/planning-with-files",
   "license": "MIT",
+  "hooks": "./hooks/claude-precompact.json",
   "keywords": [
     "planning",
     "manus",

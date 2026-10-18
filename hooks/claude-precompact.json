@@ -1,0 +1,17 @@
+{
+  "description": "Claude Code PreCompact hook. ZCode has no PreCompact event; its SessionStart compact matcher restores context after compaction instead.",
+  "hooks": {
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh\" pre-compact",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}

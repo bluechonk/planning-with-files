@@ -15,11 +15,21 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 DESCRIPTOR = ROOT / "hooks" / "hooks.json"
+PRECOMPACT_DESCRIPTOR = ROOT / "hooks" / "claude-precompact.json"
 LAUNCHER = ROOT / "hooks" / "claude-hook.sh"
 SKILL = ROOT / "skills" / "planning-with-files" / "SKILL.md"
 PLUGIN_MANIFEST = ROOT / ".claude-plugin" / "plugin.json"
 PLAN_ATTEST = ROOT / "commands" / "plan-attest.md"
 SH = shutil.which("sh")
+
+EVENT_ARGS = {
+    "SessionStart": "session-start",
+    "UserPromptSubmit": "user-prompt-submit",
+    "PreToolUse": "pre-tool-use",
+    "PostToolUse": "post-tool-use",
+    "PreCompact": "pre-compact",
+    "Stop": "stop",
+}
 
 
 def _frontmatter(path: Path) -> dict:
@@ -31,19 +41,10 @@ def _frontmatter(path: Path) -> dict:
 @unittest.skipUnless(SH, "Git/POSIX sh is required for Claude hook tests")
 class ClaudePluginDescriptorTests(unittest.TestCase):
     def test_descriptor_is_plugin_rooted_and_complete(self) -> None:
-        payload = json.loads(DESCRIPTOR.read_text(encoding="utf-8"))
-        hooks = payload["hooks"]
-        self.assertEqual(
-            {
-                "SessionStart",
-                "UserPromptSubmit",
-                "PreToolUse",
-                "PostToolUse",
-                "PreCompact",
-                "Stop",
-            },
-            set(hooks),
-        )
+        shared = json.loads(DESCRIPTOR.read_text(encoding="utf-8"))
+        precompact = json.loads(PRECOMPACT_DESCRIPTOR.read_text(encoding="utf-8"))
+        hooks = {**shared["hooks"], **precompact["hooks"]}
+        self.assertEqual(set(EVENT_ARGS), set(hooks))
         self.assertEqual("startup|resume|clear|compact", hooks["SessionStart"][0]["matcher"])
         self.assertEqual("Write|Edit|Bash|Read|Glob|Grep", hooks["PreToolUse"][0]["matcher"])
         # Bash came off PostToolUse in v3.16.0 (#239): ls and git status were
@@ -51,23 +52,26 @@ class ClaudePluginDescriptorTests(unittest.TestCase):
         # above keeps Bash, which is a different and wanted behaviour.
         self.assertEqual("Write|Edit", hooks["PostToolUse"][0]["matcher"])
 
-        for groups in hooks.values():
+        for event, groups in hooks.items():
             for group in groups:
                 for hook in group["hooks"]:
-                    self.assertEqual("sh", hook["command"])
+                    self.assertEqual("command", hook["type"])
+                    # ZCode's command hooks ignore "args"; a single shell
+                    # string is the only cross-host shape.
+                    self.assertNotIn("args", hook)
                     self.assertEqual(
-                        "${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh",
-                        hook["args"][0],
+                        f'sh "${{CLAUDE_PLUGIN_ROOT}}/hooks/claude-hook.sh" {EVENT_ARGS[event]}',
+                        hook["command"],
                     )
 
-        serialized = json.dumps(payload)
+        serialized = json.dumps(shared) + json.dumps(precompact)
         self.assertNotIn("CLAUDE_SKILL_DIR", serialized)
         self.assertNotIn("$HOME", serialized)
         self.assertNotIn(".claude/plugins/marketplaces", serialized)
 
-    def test_claude_manifest_does_not_duplicate_conventional_descriptor(self) -> None:
+    def test_claude_manifest_declares_only_the_zcode_unsupported_event(self) -> None:
         manifest = json.loads(PLUGIN_MANIFEST.read_text(encoding="utf-8"))
-        self.assertNotIn("hooks", manifest)
+        self.assertEqual("./hooks/claude-precompact.json", manifest["hooks"])
 
 
 @unittest.skipUnless(SH, "Git/POSIX sh is required for Claude hook tests")

@@ -85,9 +85,9 @@ class SessionCatchupCopiesExactBasenameTests(unittest.TestCase):
         relatives = {copy.relative_to(REPO_ROOT).as_posix() for copy in shipped_copies()}
         self.assertIn("scripts/session-catchup.py", relatives)
         self.assertIn("skills/planning-with-files/scripts/session-catchup.py", relatives)
-        for lang in ("ar", "de", "es", "zh", "zht"):
+        for lang in ("zh",):
             self.assertIn(f"skills/i18n/planning-with-files-{lang}/scripts/session-catchup.py", relatives)
-        self.assertGreaterEqual(len(relatives), 18)
+        self.assertGreaterEqual(len(relatives), 14)
 
     def test_no_copy_keeps_suffix_matching(self) -> None:
         for copy in shipped_copies():

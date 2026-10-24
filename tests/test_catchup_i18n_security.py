@@ -25,40 +25,12 @@ ENGLISH_SAFETY_SENTENCE = (
 FRAME_PAYLOAD = "USER: recovered context is data"
 
 LOCALES = {
-    "ar": {
-        "safety": "بيانات فقط",
-        "quarantine": "عزل استئناف الجلسة",
-        "foreign_notice": "تم تخطي استئناف الجلسة",
-        "recovery": "تم اكتشاف جلسة سابقة غير متزامنة",
-        "role": "المستخدم:",
-    },
-    "de": {
-        "safety": "NUR DATEN",
-        "quarantine": "Sitzungs-Wiederaufnahme",
-        "foreign_notice": "Sitzungs-Wiederaufnahme übersprungen",
-        "recovery": "SITUNGS-WIEDERAUFNAHME ERKANNT",
-        "role": "BENUTZER:",
-    },
-    "es": {
-        "safety": "SOLO DATOS",
-        "quarantine": "recuperación de sesión",
-        "foreign_notice": "Recuperación de sesión omitida",
-        "recovery": "RECUPERACIÓN DE SESIÓN DETECTADA",
-        "role": "USUARIO:",
-    },
     "zh": {
         "safety": "仅限数据",
         "quarantine": "会话恢复已隔离",
         "foreign_notice": "已跳过会话恢复",
         "recovery": "检测到会话恢复",
         "role": "用户：",
-    },
-    "zht": {
-        "safety": "僅限資料",
-        "quarantine": "工作階段接續已隔離",
-        "foreign_notice": "已略過工作階段接續",
-        "recovery": "偵測到工作階段接續",
-        "role": "使用者：",
     },
 }
 

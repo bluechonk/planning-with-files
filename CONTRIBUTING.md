@@ -97,7 +97,7 @@ Language variants live under directories that follow this pattern:
 skills/i18n/planning-with-files-<lang>/
 ```
 
-Keep them one directory below `skills/`. The Claude Code plugin scan reads `skills/*/SKILL.md` and does not recurse, so a variant placed directly under `skills/` is registered for every plugin user and its description is added to every session's system prompt. `tests/test_plugin_skill_surface.py` fails if that happens.
+Simplified Chinese (`planning-with-files-zh`) is the only variant shipped today. Keep any new variant one directory below `skills/`. The Claude Code plugin scan reads `skills/*/SKILL.md` and does not recurse, so a variant placed directly under `skills/` is registered for every plugin user and its description is added to every session's system prompt. `tests/test_plugin_skill_surface.py` fails if that happens.
 
 IDE adapter variants live under these directories:
 

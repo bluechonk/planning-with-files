@@ -1,6 +1,6 @@
 {
   "name": "planning-with-files",
-  "version": "3.24.3",
+  "version": "3.25.1",
   "description": "Persistent project planning files with ZCode-compatible lifecycle hooks. Fork of OthmanAdi/planning-with-files; the shared hook descriptor uses single command strings so ZCode and Claude Code both execute it.",
   "author": {
     "name": "bluechonk",

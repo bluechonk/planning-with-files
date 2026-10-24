@@ -3,21 +3,21 @@
 Claude Code discovers a plugin's skills by scanning `skills/*/SKILL.md` at one
 level, so every directory placed directly under `skills/` is registered for
 every plugin user and pays its description in the system prompt of every
-session. Measured with `claude plugin details` at v3.10.1, the five language
+session. Measured with `claude plugin details` at v3.10.1, the language
 variants cost about 1,010 of the plugin's roughly 2,254 always-on tokens.
 
-The variants therefore live at `skills/i18n/planning-with-files-<lang>/`, which
+The variant therefore lives at `skills/i18n/planning-with-files-<lang>/`, which
 the plugin scan does not reach. Nothing about the skill-route install changes:
-`npx skills add ... --skill planning-with-files-de` resolves by skill name over
+`npx skills add ... --skill planning-with-files-zh` resolves by skill name over
 a recursive scan of the repository, and still installs to
-`~/.claude/skills/planning-with-files-de/`.
+`~/.claude/skills/planning-with-files-zh/`.
 
 This test fails if a variant is moved (or a new one is added) directly under
 `skills/`, which would silently put those descriptions back into every session.
 
 The extra depth also invalidated any install that copies `skills/*` wholesale
-into a skills directory: `i18n/` is not a skill, and the five variants land a
-level below where the loader and the `/plan-<lang>` commands look for them.
+into a skills directory: `i18n/` is not a skill, and the variant lands a
+level below where the loader and the `/plan-<lang>` commands look for it.
 The last check below keeps that shape out of the shipped install docs.
 """
 from __future__ import annotations
@@ -33,11 +33,7 @@ SKILLS_DIR = REPO_ROOT / "skills"
 I18N_DIR = SKILLS_DIR / "i18n"
 CANONICAL = "planning-with-files"
 EXPECTED_VARIANTS = {
-    "planning-with-files-ar",
-    "planning-with-files-de",
-    "planning-with-files-es",
     "planning-with-files-zh",
-    "planning-with-files-zht",
 }
 
 

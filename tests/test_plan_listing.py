@@ -181,7 +181,7 @@ def test_empty_plan_has_zero_counts(runtime, tmp_path):
     assert_counts(listed(runtime, tmp_path), "empty", 0, 0)
 
 
-@pytest.mark.parametrize("language", ["en", "ar", "de", "es", "zh", "zht"])
+@pytest.mark.parametrize("language", ["en", "zh"])
 def test_real_shipped_templates_have_five_phase_counts(runtime, tmp_path, language):
     if language == "en":
         source = REPO_ROOT / "templates" / "task_plan.md"

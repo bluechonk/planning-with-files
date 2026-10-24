@@ -4,13 +4,13 @@ Through v2.43 the UserPromptSubmit / PreToolUse / PreCompact hook bodies were
 giant inline sh scalars embedded in the SKILL.md frontmatter. v3 moved that
 logic into scripts/inject-plan.sh and reduced the canonical scalars to thin
 self-discovery dispatchers — but only the canonical file and the .agents mirror
-were converted. The eleven other hook-bearing variants (six IDE mirrors plus
-five language variants) kept the frozen v2.43 inline body, so every fix that
+were converted. The other hook-bearing variants (six IDE mirrors plus the
+language variants) kept the frozen v2.43 inline body, so every fix that
 landed in inject-plan.sh after the split silently never reached users who
 installed one of those variants. The reporter of #212 installed .codex and got
 a "fixed" bug.
 
-The first conversion of those eleven used ``ls a b c | head -1`` for discovery.
+The first conversion of those variants used ``ls a b c | head -1`` for discovery.
 Adversarial review found three silent-failure holes in it:
 
   1. ``ls | head -1`` SORTS its output, so with several copies installed the
@@ -101,7 +101,7 @@ REQUIRED_SIBLING_SCRIPTS = (
 NOT_FOUND_NOTICE = "hook script not found"
 
 # Hosts whose variants carry the generated first-match-wins loop dispatch
-# (plus the five language variants under skills/). The canonical skill and the
+# (plus the language variants under skills/). The canonical skill and the
 # .agents mirror install through Claude Code where CLAUDE_SKILL_DIR is always
 # set; they keep the legacy ls-fallback shape and their silent-when-absent
 # behavior, pinned by test_hook_body_v240.py.
@@ -143,7 +143,7 @@ HOST_EXPECTED_PROBES = {
     ),
 }
 
-# The eleven loop-dispatch variants, asserted present (anti-vacuity).
+# The loop-dispatch variants, asserted present (anti-vacuity).
 EXPECTED_LOOP_DISPATCH_FILES = {
     ".codebuddy/skills/planning-with-files/SKILL.md",
     ".codex/skills/planning-with-files/SKILL.md",
@@ -151,11 +151,7 @@ EXPECTED_LOOP_DISPATCH_FILES = {
     ".factory/skills/planning-with-files/SKILL.md",
     ".mastracode/skills/planning-with-files/SKILL.md",
     ".opencode/skills/planning-with-files/SKILL.md",
-    "skills/i18n/planning-with-files-ar/SKILL.md",
-    "skills/i18n/planning-with-files-de/SKILL.md",
-    "skills/i18n/planning-with-files-es/SKILL.md",
     "skills/i18n/planning-with-files-zh/SKILL.md",
-    "skills/i18n/planning-with-files-zht/SKILL.md",
 }
 
 # The first-match-wins discovery loop (single line, POSIX sh).
@@ -242,7 +238,7 @@ def _all_commands(hooks_block):
 
 
 def _is_loop_dispatch(skill_md):
-    """True for the eleven variants that carry the generated loop dispatch."""
+    """True for the variants that carry the generated loop dispatch."""
     rel = skill_md.relative_to(REPO_ROOT).parts
     if rel[0] in LOOP_DISPATCH_HOSTS:
         return True
@@ -292,8 +288,8 @@ class HookDispatchParityTests(unittest.TestCase):
 
     def test_guard_hooks_bearing_files_found(self):
         # Anti-vacuity guard: the fleet must be discovered, the reporter's
-        # route (#212 was filed from a .codex install) must be in it, and all
-        # eleven loop-dispatch variants must be present so the loop-shape
+        # route (#212 was filed from a .codex install) must be in it, and every
+        # loop-dispatch variant must be present so the loop-shape
         # assertions below cannot pass by matching nothing.
         self.assertTrue(self.files, "no hooks-bearing SKILL.md files discovered")
         paths = {str(f.relative_to(REPO_ROOT)).replace("\\", "/") for f, _ in self.files}
@@ -309,7 +305,7 @@ class HookDispatchParityTests(unittest.TestCase):
         )
 
     def test_no_inline_resolution_body_in_any_scalar(self):
-        # The v2.43 inline body froze eleven variants out of every
+        # The v2.43 inline body froze those variants out of every
         # inject-plan.sh fix. Hooks must dispatch, never inline.
         for f, data in self.files:
             with self.subTest(file=str(f.relative_to(REPO_ROOT))):
@@ -382,7 +378,7 @@ class HookDispatchParityTests(unittest.TestCase):
 
     def test_loop_dispatch_uses_first_match_wins_not_ls_head(self):
         # ``ls a b c | head -1`` SORTS, so the marketplace copy beat the
-        # host-native one whenever both existed. The eleven converted variants
+        # host-native one whenever both existed. The converted variants
         # must use the first-match-wins loop and must not carry the ls idiom.
         files = self._loop_dispatch_files()
         self.assertTrue(files, "no loop-dispatch variants discovered")

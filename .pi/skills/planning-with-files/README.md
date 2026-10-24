@@ -118,38 +118,18 @@ The pattern is the one Manus described before [Meta acquired it for $2 billion o
 
 
 <details>
-<summary><strong>🌐 Available in 5 other languages</strong></summary>
-
-**🇸🇦 العربية / Arabic**
-```bash
-npx skills add OthmanAdi/planning-with-files --skill planning-with-files-ar -g
-```
-
-**🇩🇪 Deutsch / German**
-```bash
-npx skills add OthmanAdi/planning-with-files --skill planning-with-files-de -g
-```
-
-**🇪🇸 Español / Spanish**
-```bash
-npx skills add OthmanAdi/planning-with-files --skill planning-with-files-es -g
-```
+<summary><strong>🌐 中文版 / Chinese (Simplified)</strong></summary>
 
 **🇨🇳 中文版 / Chinese (Simplified)**
 ```bash
 npx skills add OthmanAdi/planning-with-files --skill planning-with-files-zh -g
 ```
 
-**🇹🇼 正體中文版 / Chinese (Traditional)**
-```bash
-npx skills add OthmanAdi/planning-with-files --skill planning-with-files-zht -g
-```
+This is a real translation, not an English body with a translated description: the SKILL.md prose, the templates, and the user-facing output of `check-complete`, `init-session` and `session-catchup` are all localized. The status tokens stay literal English (`**Status:** complete`) on purpose, because `check-complete.sh` matches them with `grep -F`, so translating them would disable the completion gate.
 
-These are real translations, not an English body with a translated description: the SKILL.md prose, the templates, and the user-facing output of `check-complete`, `init-session` and `session-catchup` are all localized. The status tokens stay literal English (`**Status:** complete`) on purpose, because `check-complete.sh` matches them with `grep -F`, so translating them would disable the completion gate.
+Since v3.10.0 the variant also ships the full script surface: attestation, the Stop gate, the ledger, phase status and plan-doctor used to be canonical-only, which quietly made the translated install a subset install. Full details, including what changed on the plugin route in v3.11.0, are in [docs/languages.md](https://github.com/OthmanAdi/planning-with-files/blob/v3.24.3/docs/languages.md).
 
-Since v3.10.0 the variants also ship the full script surface: attestation, the Stop gate, the ledger, phase status and plan-doctor used to be canonical-only, which quietly made every non-English install a subset install. Full details, including what changed on the plugin route in v3.11.0, are in [docs/languages.md](https://github.com/OthmanAdi/planning-with-files/blob/v3.24.3/docs/languages.md).
-
-They live under `skills/i18n/`, one directory deeper than the canonical skill. The install commands above are unchanged, because `npx skills add` resolves `--skill` by skill name across the whole repository. The Claude Code plugin scan reads `skills/*/SKILL.md` without recursing, so the plugin route registers the canonical skill alone and no longer carries five extra descriptions in every session's system prompt. On that route the `/plan-ar`, `/plan-de`, `/plan-es`, `/plan-zh` and `/plan-zht` commands read the translated skill from disk instead of invoking it by name.
+It lives under `skills/i18n/`, one directory deeper than the canonical skill. The install command above is unchanged, because `npx skills add` resolves `--skill` by skill name across the whole repository. The Claude Code plugin scan reads `skills/*/SKILL.md` without recursing, so the plugin route registers the canonical skill alone and does not carry the translation's description in every session's system prompt. On that route the `/plan-zh` command reads the translated skill from disk instead of invoking it by name.
 
 </details>
 
@@ -566,7 +546,7 @@ Slash commands ship with the Claude Code plugin route (see the install matrix ab
 | `/planning-with-files:plan-attest` | type `/plan-attest` | Locks `task_plan.md` with a SHA-256; hooks refuse a tampered plan body; `--show` / `--clear` (v2.37.0+) |
 | `/planning-with-files:plan-goal` | type `/plan-goal` | Runs until the plan reports complete, composing with Claude Code `/goal` (v2.38.0+) |
 | `/planning-with-files:plan-loop` | type `/plan-loop` | Planning-aware cadence on `/loop`, default 10 minute tick (v2.38.0+) |
-| `/planning-with-files:plan-de` | type `/plan-de` | Start planning in German; also `-ar`, `-es`, `-zh`, `-zht` (v2.33.0+) |
+| `/planning-with-files:plan-zh` | type `/plan-zh` | Start planning in Simplified Chinese (v2.33.0+) |
 | `/planning-with-files:start` | type `/planning` | Original start command |
 
 Typing `/plan` prefix-matches every `plan*` command in autocomplete; `/planning-with-files:status` autocompletes as `/status` (the older `/plan:status` label predates the rename).
@@ -621,14 +601,14 @@ The DSH plugin registers these in-session commands, typed with no prefix. `/plan
 
 | Platform | You type | Examples |
 |----------|----------|----------|
-| Claude Code | `/planning-with-files:<verb>`, autocompletes from the short form | `/plan`, `/pwf`, `/plan-attest`, `/plan-de` |
+| Claude Code | `/planning-with-files:<verb>`, autocompletes from the short form | `/plan`, `/pwf`, `/plan-attest`, `/plan-zh` |
 | Pi | bare form, no prefix | `/plan-status`, `/plan-execute`, `/plan-goal` |
 | Hermes Agent | bare form, no prefix | `/pwf`, `/pwf-status`, `/plan-status` |
 | OpenCode | bare form, no prefix | `/pwf`, `/pwf-status` |
 | DeepSeek Harness | bare form, no prefix | `/pwf`, `/pwf-status` |
 | Continue.dev | `/planning-with-files` | |
 
-On the plugin route the model-invocable SKILL is `planning-with-files:planning-with-files`; the doubled form is the skill id, not a command you type. The five language variants live under `skills/i18n/`, which the plugin scan does not reach, so there is no `planning-with-files:planning-with-files-de` to invoke by name — reach a translation through its `/plan-ar`, `/plan-de`, `/plan-es`, `/plan-zh` or `/plan-zht` command, or install it as its own skill with `npx skills add OthmanAdi/planning-with-files --skill planning-with-files-de -g`, which registers it under its own name. There is no `/pwf-de` and no `/planning-with-files:planning-with-files-goal`; `/pwf` is just a short alias for `/plan`.
+On the plugin route the model-invocable SKILL is `planning-with-files:planning-with-files`; the doubled form is the skill id, not a command you type. The Simplified Chinese variant lives under `skills/i18n/`, which the plugin scan does not reach, so there is no `planning-with-files:planning-with-files-zh` to invoke by name — reach the translation through its `/plan-zh` command, or install it as its own skill with `npx skills add OthmanAdi/planning-with-files --skill planning-with-files-zh -g`, which registers it under its own name. There is no `/pwf-zh` and no `/planning-with-files:planning-with-files-goal`; `/pwf` is just a short alias for `/plan`.
 
 
 

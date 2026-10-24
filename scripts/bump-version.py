@@ -11,9 +11,9 @@ Run before tagging a release:
     python scripts/bump-version.py 2.37.0
     python scripts/bump-version.py 2.37.0 --dry-run
 
-Maintained targets (23 entries: 22 tracked files plus optional local staging):
+Maintained targets (20 entries: 19 tracked files plus optional local staging):
     skills/planning-with-files/SKILL.md            (canonical)
-    skills/i18n/planning-with-files-{ar,de,es,zh,zht}/SKILL.md
+    skills/i18n/planning-with-files-zh/SKILL.md    (Simplified Chinese)
     .{codebuddy,codex,cursor,factory,hermes,mastracode,opencode}/skills/planning-with-files/SKILL.md
     .agents/skills/planning-with-files/SKILL.md    (Agent Skills standard layout)
     .pi/skills/planning-with-files/SKILL.md        (canonical npm skill)
@@ -45,11 +45,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 # kind: "skill_md", "plugin_json", "marketplace_json", "citation_cff"
 PARITY_FILES = [
     ("skills/planning-with-files/SKILL.md", "skill_md"),
-    ("skills/i18n/planning-with-files-ar/SKILL.md", "skill_md"),
-    ("skills/i18n/planning-with-files-de/SKILL.md", "skill_md"),
-    ("skills/i18n/planning-with-files-es/SKILL.md", "skill_md"),
     ("skills/i18n/planning-with-files-zh/SKILL.md", "skill_md"),
-    ("skills/i18n/planning-with-files-zht/SKILL.md", "skill_md"),
     (".codebuddy/skills/planning-with-files/SKILL.md", "skill_md"),
     (".codex/skills/planning-with-files/SKILL.md", "skill_md"),
     (".cursor/skills/planning-with-files/SKILL.md", "skill_md"),

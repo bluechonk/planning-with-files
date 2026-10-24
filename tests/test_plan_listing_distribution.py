@@ -23,7 +23,7 @@ SURFACES = (
     *((ide, f"{ide}/skills/planning-with-files/scripts") for ide in IDE_SURFACES),
     *((f"skills/i18n/planning-with-files-{lang}",
        f"skills/i18n/planning-with-files-{lang}/scripts")
-      for lang in ("ar", "de", "es", "zh", "zht")),
+      for lang in ("zh",)),
 )
 MANIFESTS = runpy.run_path(str(ROOT / "scripts/sync-ide-folders.py"))["IDE_MANIFESTS"]
 RUNTIMES = (

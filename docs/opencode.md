@@ -7,6 +7,8 @@ planning-with-files treats [OpenCode](https://opencode.ai) as a first-class host
 
 Plugin version 1.2.0 supports OpenCode 1.18.21 and OpenCode 2.0.21. The default export provides the v1 `server` entry and the v2 `setup` entry. OpenCode 2 uses different hook registrations and config keys; use the installation block for your version below.
 
+Source version 1.2.1 adds current attestation validity to status. Its npm publication is separate; the pinned installation examples below remain on 1.2.0.
+
 ## Install
 
 ### 1. The skill

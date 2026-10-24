@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.25.1] - 2026-10-23
+
+### Added
+- An optional skill-lens evaluation compares planning-file creation with and without the skill. The guide identifies contributor-reported measurements, evaluation limits and paid-run requirements. Framework script execution requires a sandbox backend (PR #334).
+
+### Fixed
+- OpenCode status distinguishes a stored attestation marker from a valid digest for the current plan. Legacy plans with unreadable or oversized markers do not report current validity. OpenCode and DSH continue to share the same core (PR #331, #330).
+- DSH `/pwf-status` preserves the selector-required notice when several named plans exist. The real no-plan message and explicitly selected plan status remain available (PR #333, #332).
+
+### Changed
+- OpenCode plugin source version is 1.2.1 and DSH plugin source version is 1.0.2. Their npm publications are separate from this repository release.
+- Contributor credits and the README portrait grid include the new contributors.
+
+### Thanks
+- WU Leizhi (@MbappeWU), for the OpenCode attestation-status fix and root/named-plan regression tests (PR #331).
+- @kuei51307-hub, for correcting DSH status when a plan selector is required and adding command-level coverage (PR #333).
+- Emad Mokhtar (@EmadMokhtar), for the optional skill-lens evaluation, configuration and measurement guide (PR #334).
+
+## [3.25.0] - 2026-10-20
+
+### Added
+- Hermes adapter 0.3.0 selects named plans per conversation with `planning_with_files_select`, successful named initialization, and successful file operations. Profile-local session records survive backend restarts, and request-local selectors let concurrent conversations use different plans without changing the process environment (#328).
+
+### Fixed
+- Hermes tools, commands, reminders and the completion gate use the selected session plan. Missing or invalid selected plans stay unavailable until explicitly changed or cleared; conflicting tool directory arguments return an error. Unbound ambiguity refusal, session admission, no-link checks and plan attestation remain active. Failed operations, reference reads and patches spanning several plans do not switch an existing selection (#328).
+
+### Thanks
+- Piotr Maziarz (@Vyzygota), for reproducing the Hermes gateway selection gap and specifying per-session binding, cross-root selection and concurrency requirements (#328).
+
 ## [3.24.3] - 2026-10-17
 
 ### Security

@@ -1,11 +1,14 @@
 import * as crypto from "node:crypto"
 import * as fs from "node:fs"
+import fsNative from "node:fs"
+import { syncBuiltinESMExports } from "node:module"
 import * as os from "node:os"
 import * as path from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import {
   BANNER,
   ambiguityNotice,
+  attestationPathFor,
   buildContext,
   checkComplete,
   countSelectablePlans,
@@ -20,6 +23,7 @@ import {
   slugIsValid,
   summarizeStatus,
   verifyPlan,
+  writeAttestation,
 } from "../src/core.js"
 
 const GATED_PLAN = [
@@ -432,5 +436,134 @@ describe("init and status", () => {
     expect(fs.readFileSync(path.join(root, "task_plan.md"), "utf8")).toContain("FROM SKILL")
     expect(fs.readFileSync(path.join(root, "findings.md"), "utf8")).toContain("# Findings")
     expect(initPlan(root, { mode: "turbo" }, env).ok).toBe(false)
+  })
+})
+
+describe("status attestation validity (#330)", () => {
+  function expectCurrentAttestation(planDir: string) {
+    const planFile = path.join(planDir, "task_plan.md")
+    const markerFile = attestationPathFor(root, planDir)
+
+    const legacy = summarizeStatus(root, env)
+    expect(legacy.mode).toBe("legacy")
+    expect(legacy.attested).toBe(false)
+    expect(legacy.attestationValid).toBe(false)
+
+    fs.writeFileSync(path.join(planDir, ".mode"), "autonomous\n")
+    writeAttestation(root, planDir)
+    const current = summarizeStatus(root, env)
+    expect(current.attested).toBe(true)
+    expect(current.attestationValid).toBe(true)
+    expect(buildContext(root, planDir)).toContain("Build the adapter")
+    expect(buildContext(root, planDir)).not.toContain("context blocked")
+
+    const planBytes = fs.readFileSync(planFile)
+    const markerBytes = fs.readFileSync(markerFile)
+    summarizeStatus(root, env)
+    expect(fs.readFileSync(planFile).equals(planBytes)).toBe(true)
+    expect(fs.readFileSync(markerFile).equals(markerBytes)).toBe(true)
+
+    fs.appendFileSync(planFile, "\n- edited\n")
+    const stale = summarizeStatus(root, env)
+    expect(stale.attested).toBe(true)
+    expect(stale.attestationValid).toBe(false)
+    expect(buildContext(root, planDir)).toBe("[planning-with-files] context blocked: PLAN TAMPERED")
+    const stalePlan = fs.readFileSync(planFile)
+    const staleMarker = fs.readFileSync(markerFile)
+    summarizeStatus(root, env)
+    expect(fs.readFileSync(planFile).equals(stalePlan)).toBe(true)
+    expect(fs.readFileSync(markerFile).equals(staleMarker)).toBe(true)
+
+    fs.writeFileSync(markerFile, "not-a-digest\n")
+    const malformed = summarizeStatus(root, env)
+    expect(malformed.attested).toBe(true)
+    expect(malformed.attestationValid).toBe(false)
+    expect(buildContext(root, planDir)).toBe(
+      "[planning-with-files] context blocked: malformed plan attestation",
+    )
+
+    writeAttestation(root, planDir)
+    const restored = summarizeStatus(root, env)
+    expect(restored.attested).toBe(true)
+    expect(restored.attestationValid).toBe(true)
+    expect(fs.readFileSync(markerFile, "utf8").trim()).toBe(sha(planFile))
+    expect(buildContext(root, planDir)).toContain("Build the adapter")
+    expect(buildContext(root, planDir)).not.toContain("context blocked")
+  }
+
+  it("reports a root .plan-attestation as current only while it matches task_plan.md", () => {
+    fs.writeFileSync(path.join(root, "task_plan.md"), GATED_PLAN)
+    expect(attestationPathFor(root, root)).toBe(path.join(root, ".plan-attestation"))
+    expectCurrentAttestation(root)
+    expect(summarizeStatus(root, env).plan_id).toBe("root")
+  })
+
+  it("reports a named-plan .attestation as current only while it matches task_plan.md", () => {
+    const dir = slugPlan(root, "2026-09-02-run", { pointer: true })
+    expect(attestationPathFor(root, dir)).toBe(path.join(dir, ".attestation"))
+    expectCurrentAttestation(dir)
+    expect(summarizeStatus(root, env).plan_id).toBe("2026-09-02-run")
+  })
+})
+
+describe.each(["root", "named"] as const)("legacy %s attestation validity", (layout) => {
+  function legacyPlan(): { planDir: string; marker: string } {
+    const planDir = layout === "root" ? root : slugPlan(root, "2026-10-23-legacy", { pointer: true })
+    fs.writeFileSync(path.join(planDir, "task_plan.md"), GATED_PLAN)
+    return { planDir, marker: attestationPathFor(root, planDir) }
+  }
+
+  it("reports a valid digest without requiring autonomous mode", () => {
+    const { planDir, marker } = legacyPlan()
+    expect(summarizeStatus(root, env).attestationValid).toBe(false)
+    writeAttestation(root, planDir)
+    expect(summarizeStatus(root, env)).toMatchObject({ mode: "legacy", attested: true, attestationValid: true })
+    fs.unlinkSync(marker)
+    expect(summarizeStatus(root, env).attestationValid).toBe(false)
+  })
+
+  it("does not call an oversized unreadable marker valid when legacy context is allowed", () => {
+    const { planDir, marker } = legacyPlan()
+    const planFile = path.join(planDir, "task_plan.md")
+    const planBefore = fs.readFileSync(planFile)
+    const markerBefore = Buffer.from("x".repeat(129))
+    fs.writeFileSync(marker, markerBefore)
+
+    const status = summarizeStatus(root, env)
+    expect(status).toMatchObject({ attested: true, attestationValid: false })
+    expect(buildContext(root, planDir)).toContain("Build the adapter")
+    expect(fs.readFileSync(planFile)).toEqual(planBefore)
+    expect(fs.readFileSync(marker)).toEqual(markerBefore)
+  })
+
+  it("preserves context refusal for a readable malformed legacy marker", () => {
+    const { planDir, marker } = legacyPlan()
+    fs.writeFileSync(marker, "not-a-digest\n")
+    expect(summarizeStatus(root, env)).toMatchObject({ attested: true, attestationValid: false })
+    expect(buildContext(root, planDir)).toBe("[planning-with-files] context blocked: malformed plan attestation")
+    expect(fs.readFileSync(marker, "utf8")).toBe("not-a-digest\n")
+  })
+
+  it.each(["deleted", "unreadable"] as const)("does not report validity when the marker becomes %s during its read", (failure) => {
+    const { planDir, marker } = legacyPlan()
+    writeAttestation(root, planDir)
+    const readFileSync = fsNative.readFileSync
+    // Only the marker's actual filesystem read is interrupted. Its presence
+    // lstat and every plan/policy read retain their real behavior.
+    fsNative.readFileSync = ((...args: Parameters<typeof fsNative.readFileSync>) => {
+      if (args[0] === marker) {
+        if (failure === "deleted") fs.unlinkSync(marker)
+        throw Object.assign(new Error("marker unavailable"), { code: failure === "deleted" ? "ENOENT" : "EACCES" })
+      }
+      return readFileSync(...args)
+    }) as typeof fsNative.readFileSync
+    syncBuiltinESMExports()
+    try {
+      expect(summarizeStatus(root, env)).toMatchObject({ attested: true, attestationValid: false })
+      expect(buildContext(root, planDir)).toContain("Build the adapter")
+    } finally {
+      fsNative.readFileSync = readFileSync
+      syncBuiltinESMExports()
+    }
   })
 })

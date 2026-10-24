@@ -6,6 +6,8 @@ Native [OpenCode](https://opencode.ai) plugin for [planning-with-files](https://
 
 Version 1.2.0 supports OpenCode 1.18.21 and OpenCode 2.0.21. For OpenCode 2, add the plugin to `opencode.json` (project) or `~/.config/opencode/opencode.json` (global):
 
+Source version 1.2.1 adds `attestationValid` to status. The pinned installation examples below remain on 1.2.0 until the separate npm publication.
+
 ```json
 {
   "plugins": ["opencode-planning-with-files@1.2.0"]
@@ -46,6 +48,8 @@ Plan selection honors `PLAN_ID`. Without it, multiple named plans produce an amb
 Local v2 wrappers must re-export the default definition: `export { default } from "./path/to/dist/index.js"`. The default definition also carries the v1 `server` entry, and the named `PlanningWithFiles` factory remains available.
 
 Autonomous and gated plans inject only when `.attestation` (slug) or `.plan-attestation` (root) matches the SHA-256 of `task_plan.md`. `PLANNING_DISABLED=1` silences every hook; `PWF_PLAN_ROOT=<absolute path>` pins the project root and fails closed when it does not resolve. A live plan in a direct child project makes a cwd guess ambiguous and nothing is injected, with a one-line notice.
+
+`pwf_status` reports `attested` and `attestationValid` separately. `attested` is true when `.plan-attestation` for a root plan, or `.attestation` for a named plan, is a regular file. `attestationValid` is true only when that file is present and the current `task_plan.md` passes the same attestation check context injection uses. A plan with no marker reports both fields false. A stale digest, or a malformed marker such as `not-a-digest`, keeps `attested` true and sets `attestationValid` to false. Status inspection does not rewrite the plan or the marker. Context injection still refuses a stale plan with `PLAN TAMPERED` and a malformed marker with `malformed plan attestation`.
 
 ## Commands
 

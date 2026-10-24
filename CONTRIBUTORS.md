@@ -107,6 +107,12 @@ These amazing people have contributed code, documentation, or significant improv
 
 ### Other Contributors
 
+- **[WU Leizhi](https://github.com/MbappeWU)**, [PR #331](https://github.com/OthmanAdi/planning-with-files/pull/331)
+  - Added current attestation validity to OpenCode status while preserving the marker-presence field, with root and named-plan regression coverage.
+
+- **[Emad Mokhtar](https://github.com/EmadMokhtar)**, [PR #334](https://github.com/OthmanAdi/planning-with-files/pull/334)
+  - Added an optional skill-lens evaluation, runner configuration and guide with contributor-reported comparisons and evaluation limits.
+
 - **[littleblack LB](https://github.com/littleblacklb)**, [PR #324](https://github.com/OthmanAdi/planning-with-files/pull/324)
   - Reported repeated Pi parity plan injection and implemented unchanged-view suppression with confirmed-delivery tracking, session and selection isolation, recovery invalidation and regression tests.
   - Reported progress-attestation workflow friction and specified safety requirements, prompting the Pi snapshot verification review ([issue #326](https://github.com/OthmanAdi/planning-with-files/issues/326)).
@@ -157,7 +163,7 @@ These amazing people have contributed code, documentation, or significant improv
   - Added a bounded retry for the PowerShell active-pointer pre-check race during concurrent named-plan initialization, preserving root and pointer validation.
   - Added explicit root and named attestation targets so a roadmap can be attested without changing the active ticket plan, with selection and failure-path regressions.
 
-- **[@kuei51307-hub](https://github.com/kuei51307-hub)**, [PR #243](https://github.com/OthmanAdi/planning-with-files/pull/243), [PR #244](https://github.com/OthmanAdi/planning-with-files/pull/244), [PR #248](https://github.com/OthmanAdi/planning-with-files/pull/248), [PR #249](https://github.com/OthmanAdi/planning-with-files/pull/249), [PR #251](https://github.com/OthmanAdi/planning-with-files/pull/251), [PR #267](https://github.com/OthmanAdi/planning-with-files/pull/267), [PR #277](https://github.com/OthmanAdi/planning-with-files/pull/277), [PR #279](https://github.com/OthmanAdi/planning-with-files/pull/279), [PR #282](https://github.com/OthmanAdi/planning-with-files/pull/282), [PR #290](https://github.com/OthmanAdi/planning-with-files/pull/290)
+- **[@kuei51307-hub](https://github.com/kuei51307-hub)**, [PR #243](https://github.com/OthmanAdi/planning-with-files/pull/243), [PR #244](https://github.com/OthmanAdi/planning-with-files/pull/244), [PR #248](https://github.com/OthmanAdi/planning-with-files/pull/248), [PR #249](https://github.com/OthmanAdi/planning-with-files/pull/249), [PR #251](https://github.com/OthmanAdi/planning-with-files/pull/251), [PR #267](https://github.com/OthmanAdi/planning-with-files/pull/267), [PR #277](https://github.com/OthmanAdi/planning-with-files/pull/277), [PR #279](https://github.com/OthmanAdi/planning-with-files/pull/279), [PR #282](https://github.com/OthmanAdi/planning-with-files/pull/282), [PR #290](https://github.com/OthmanAdi/planning-with-files/pull/290), [PR #333](https://github.com/OthmanAdi/planning-with-files/pull/333)
   - Fixed active-plan display and listing for UTF-8 BOM-prefixed pointers, with regression coverage across the synchronized shell helpers.
   - Made IDE sync verification report missing canonical sources, with subprocess tests for read-only verification and unchanged sync behavior.
   - Bounded session catchup to exact planning filenames across the canonical scanners and the Hermes, MastraCode, and OpenCode adapters, with lookalike regression coverage.
@@ -167,6 +173,7 @@ These amazing people have contributed code, documentation, or significant improv
   - Made shell and PowerShell initialization report attestation failures with a recovery command, and added the missing analytics Next Step section across template copies with regression coverage.
   - Made phase-status lock ownership exclusive even when a Windows-native `mkdir` reports simultaneous success to two writers.
   - Gave PowerShell active-pointer replacement a caller-owned `ReplaceFile` backup that restores the previous pointer after a failed final replacement and removes only its own backup, so no unowned `~RF*.TMP` file is left behind, with a deterministic failure-path regression.
+  - Corrected DSH `/pwf-status` to show the selector-required notice when several named plans exist, with command-level regression coverage.
 
 - **[@Dphoshoba](https://github.com/Dphoshoba)**, [PR #242](https://github.com/OthmanAdi/planning-with-files/pull/242)
   - Proposed and implemented named-plan listing with phase counts and a shared active-pointer marker.
@@ -441,6 +448,8 @@ These developers have created forks that extend the functionality:
 
 Thank you to everyone who reported issues, provided feedback, and helped test fixes:
 
+- **[Piotr Maziarz](https://github.com/Vyzygota)**, [Issue #328](https://github.com/OthmanAdi/planning-with-files/issues/328)
+  - Reproduced the Hermes gateway's process-wide plan-selection gap and specified session binding, cross-root selection and concurrency requirements, implemented in v3.25.0.
 - [@nazeshinjite](https://github.com/nazeshinjite) - Issue #133 (Stop hook portability failure on Windows Git Bash — two-root-cause diagnosis with full Claude output, fixed in v2.34.1)
 - [@msuadOf](https://github.com/msuadOf) - Issue #93 (TMPDIR environment fix for plugin install)
 - [@DorianZheng](https://github.com/DorianZheng) - Issue #84 (BoxLite sandbox integration proposal)
@@ -491,6 +500,6 @@ If you've contributed and don't see your name here, please open an issue! We wan
 
 ---
 
-**Total Contributors:** 105 (104 community contributors plus the maintainer)
+**Total Contributors:** 108 (107 community contributors plus the maintainer)
 
-*Last updated: 2026-10-17*
+*Last updated: 2026-10-23*

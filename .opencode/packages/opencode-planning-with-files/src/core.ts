@@ -433,7 +433,7 @@ export function modeTokens(root: string, planDir: string): string[] | null {
   return effective
 }
 
-export type Verified = { ok: true; plan: Buffer; mode: string } | { ok: false; reason: string }
+export type Verified = { ok: true; plan: Buffer; mode: string; attestationValid: boolean } | { ok: false; reason: string }
 
 /** Read task_plan.md and enforce the v3 attestation contract. */
 export function verifyPlan(root: string, planDir: string): Verified {
@@ -450,7 +450,9 @@ export function verifyPlan(root: string, planDir: string): Verified {
     const actual = crypto.createHash("sha256").update(plan).digest("hex")
     if (actual !== expected) return { ok: false, reason: "PLAN TAMPERED" }
   }
-  return { ok: true, plan, mode }
+  // Legacy context can be accepted without a readable marker. Only the branch
+  // above proves that this invocation actually validated an attestation.
+  return { ok: true, plan, mode, attestationValid: attestationRaw !== null }
 }
 
 /** The per-turn injection block for a resolved plan. */
@@ -799,6 +801,7 @@ export type StatusResult = {
   plan_id?: string
   mode?: string
   attested?: boolean
+  attestationValid?: boolean
   current_phase?: string
   counts?: ReturnType<typeof gateCounts>
   conflicts?: string[]
@@ -828,13 +831,16 @@ export function summarizeStatus(root: string, env: Env): StatusResult {
   }
   const text = readText(path.join(resolved.planDir, "task_plan.md")) ?? ""
   const tokens = modeTokens(root, resolved.planDir)
+  const attested = isRegularFile(attestationPathFor(root, resolved.planDir))
+  const verified = attested ? verifyPlan(root, resolved.planDir) : null
   return {
     exists: true,
     project_dir: root,
     plan_dir: resolved.planDir,
     plan_id: planIdFor(root, resolved.planDir),
     mode: tokens && tokens.length ? tokens.join(" ") : tokens === null ? "invalid" : "legacy",
-    attested: isRegularFile(attestationPathFor(root, resolved.planDir)),
+    attested,
+    attestationValid: verified !== null && verified.ok && verified.attestationValid,
     current_phase: extractCurrentPhase(text),
     counts: gateCounts(text),
     conflicts,
